@@ -65,7 +65,7 @@ after_build:
     #- cd %zstd-dev%
     #- set LatestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
     
-    - 7z a zstd-dev-vcltl-%TIME_STRING%.7z %zstd-dev%build/Release/*
+    - 7z a zstd-dev-vcltl-%TIME_STRING%.7z ./build/*
     - appveyor PushArtifact zstd-dev-vcltl-%TIME_STRING%.7z
     - exit 2
 
