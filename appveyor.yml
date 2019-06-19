@@ -55,19 +55,20 @@ build_script:
 
 after_build:
     # remove unnecessary files
-    #- rm -f %zstd-dev%build/Release/*.exp
-    #- rm -f %zstd-dev%build/Release/*.pdb
-    #- rm -f %zstd-dev%build/Release/zstd-dev-static.lib
+    - rm -f ./build/lib/Release/*.exp
+    - rm -f ./build/lib/Release/*.pdb
+    - rm -f ./build/lib/Release/zstd_static.lib
     
     # copy include and source code files
-    #- cp -r %zstd-dev%include %zstd-dev%build/Release/
-    #- cp -r %zstd-dev%src %zstd-dev%build/Release/
+    - cp ./programs/Release/zstd.exe ./build/lib/Release/
+    - cp %zstd-dev%lib/zstd.h ./build/lib/Release/include
+    - cp %zstd-dev%lib/common/zstd_errors.h ./build/lib/Release/include
+    - cp %zstd-dev%lib/dictBuilder/zdict.h ./build/lib/Release/include
     #- cd %zstd-dev%
     #- set LatestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
     
-    - 7z a zstd-dev-vcltl-%TIME_STRING%.7z ./build/*
+    - 7z a zstd-dev-vcltl-%TIME_STRING%.7z ./build/lib/Release/*
     - appveyor PushArtifact zstd-dev-vcltl-%TIME_STRING%.7z
-    - exit 2
 
 #artifacts:
     #- path: build/Release
