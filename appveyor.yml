@@ -1,0 +1,83 @@
+version: 'zstd-dev-vcltl.{build}'
+
+os: Visual Studio 2017
+
+platform:
+    - x64
+
+environment:
+  vcltl: C:/projects/vc-ltl/
+  zstd-dev: C:/projects/zstd-vcltl/
+  vcltl-url: https://github.com/Chuyu-Team/VC-LTL/releases/download/4.0.1.10/VC-LTL-4.0.1.10-Binary-VS2017.7z
+skip_tags: true
+
+init:
+    - cmake --version
+  
+install:
+    - ps: $env:TIME_STRING=(get-date -UFormat "%Y%m%d%a").ToString()
+    #- ps: Write-Host $env:TIME_STRING
+    #- touch 1.txt
+    #- 7z a %TIME_STRING%.7z ./1.txt
+    #- exit 1
+    
+    # download vcltl and zstd-dev:
+    - appveyor DownloadFile https://github.com/facebook/zstd/archive/dev.zip
+    - 7z x ./*.zip -y -o./ && mv ./zstd-dev/* %zstd-dev%
+    - rm -f ./*.zip
+    
+    # 
+    - mkdir "%vcltl%"
+    - appveyor DownloadFile %vcltl-url%
+    - 7z x ./*.7z -y -o%vcltl%
+    - rm -f ./*.7z
+
+before_build:
+    # test zstd-dev and vcltl path
+    - test -e %zstd-dev%build/cmake/CMakeLists.txt && echo exist || echo %zstd-dev%build/cmake/CMakeLists.txt Not exist && exit 1
+    - test -e %vcltl%VC-LTL" helper for cmake.cmake" && echo exist || echo %vcltl%VC-LTL helper for cmake.cmake Not exist && exit 1
+    
+    # install vcltl
+    - C:/projects/vc-ltl/Install.cmd /I
+    
+    # import vcltl.cmake and set cmake projects /MT
+    - cp %vcltl%"VC-LTL helper for cmake".cmake %zstd-dev%build/cmake/
+    - echo include("VC-LTL helper for cmake.cmake") >> %zstd-dev%build/cmake/CMakeLists.txt
+    - echo set(CMAKE_C_FLAGS_RELEASE "/MT") >> %zstd-dev%build/cmake/CMakeLists.txt
+    
+    # check file
+    - tail -n 2 %zstd-dev%build/cmake/CMakeLists.txt    
+    
+build_script:
+    - cmake -G"Visual Studio 15 2017 Win64" %zstd-dev%build/cmake/CMakeLists.txt -H. -Bbuild -DCMAKE_BUILD_TYPE=Release 
+    - cmake --build build --config Release
+
+after_build:
+    # remove unnecessary files
+    #- rm -f %zstd-dev%build/Release/*.exp
+    #- rm -f %zstd-dev%build/Release/*.pdb
+    #- rm -f %zstd-dev%build/Release/zstd-dev-static.lib
+    
+    # copy include and source code files
+    #- cp -r %zstd-dev%include %zstd-dev%build/Release/
+    #- cp -r %zstd-dev%src %zstd-dev%build/Release/
+    #- cd %zstd-dev%
+    #- set LatestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+    
+    - 7z a zstd-dev-vcltl-%TIME_STRING%.7z %zstd-dev%build/Release/*
+    - appveyor PushArtifact zstd-dev-vcltl-%TIME_STRING%.7z
+    - exit 2
+
+#artifacts:
+    #- path: build/Release
+    #artifacts path name must be appveyor API
+  
+deploy:
+    - provider: GitHub
+      description: 'weekly build zstd-dev-vcltl' 
+      auth_token:
+        secure: b7z/bl9MpzzCY+CYah15JF9aJbut5gtIWcpiZOoZpVc41W7NmKOOeB40RO7HiiK/
+      draft: false
+      tag: zstd-dev%TIME_STRING%
+      on:  
+        APPVEYOR_REPO_TAG: false
