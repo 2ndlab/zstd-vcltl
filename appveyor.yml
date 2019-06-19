@@ -23,7 +23,7 @@ install:
     
     # download vcltl and zstd-dev:
     - appveyor DownloadFile https://github.com/facebook/zstd/archive/dev.zip
-    - 7z x ./*.zip -y -o./ && mv ./dev/* %zstd-dev%
+    - 7z x ./*.zip -y -o./ && mv ./zstd-dev/* %zstd-dev%
     - rm -f ./*.zip
     
     # 
@@ -49,7 +49,8 @@ before_build:
     - tail -n 2 %zstd-dev%build/cmake/CMakeLists.txt    
     
 build_script:
-    - cmake -G"Visual Studio 15 2017 Win64" %zstd-dev%build/cmake/CMakeLists.txt -H. -Bbuild -DCMAKE_BUILD_TYPE=Release 
+    - cd %zstd-dev%build/cmake/
+    - cmake -G"Visual Studio 15 2017 Win64" ./CMakeLists.txt -H. -Bbuild -DCMAKE_BUILD_TYPE=Release 
     - cmake --build build --config Release
 
 after_build:
