@@ -60,7 +60,7 @@ after_build:
     - rm -f ./build/lib/Release/zstd_static.lib
     
     # copy include and source code files
-    - cp ./programs/Release/zstd.exe ./build/lib/Release/
+    - cp ./build/programs/Release/zstd.exe ./build/lib/Release/
     - cp %zstd-dev%lib/zstd.h ./build/lib/Release/include
     - cp %zstd-dev%lib/common/zstd_errors.h ./build/lib/Release/include
     - cp %zstd-dev%lib/dictBuilder/zdict.h ./build/lib/Release/include
