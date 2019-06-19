@@ -23,7 +23,7 @@ install:
     
     # download vcltl and zstd-dev:
     - appveyor DownloadFile https://github.com/facebook/zstd/archive/dev.zip
-    - 7z x ./*.zip -y -o./ && mv ./zstd-dev/* %zstd-dev%
+    - 7z x ./*.zip -y -o./ && mv ./dev/* %zstd-dev%
     - rm -f ./*.zip
     
     # 
