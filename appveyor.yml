@@ -79,7 +79,7 @@ deploy:
     - provider: GitHub
       description: 'weekly build zstd-dev-vcltl' 
       auth_token:
-        secure: $env:auth_token
+        secure: b7z/bl9MpzzCY+CYah15JF9aJbut5gtIWcpiZOoZpVc41W7NmKOOeB40RO7HiiK/
       draft: false
       tag: zstd-dev%TIME_STRING%
       on:  
