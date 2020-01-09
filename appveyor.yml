@@ -43,21 +43,21 @@ before_build:
     # import vcltl.cmake and set cmake projects /MT
     - cp %vcltl%"VC-LTL helper for cmake".cmake %zstd-dev%build/cmake/
     - echo include("VC-LTL helper for cmake.cmake") >> %zstd-dev%build/cmake/CMakeLists.txt
-    - echo set(CMAKE_C_FLAGS_RELEASE "/MT") >> %zstd-dev%build/cmake/CMakeLists.txt
+    #- echo set(CMAKE_C_FLAGS_RELEASE "/MT") >> %zstd-dev%build/cmake/CMakeLists.txt
     
     # check file
     - tail -n 2 %zstd-dev%build/cmake/CMakeLists.txt    
     
 build_script:
     - cd %zstd-dev%build/cmake/
-    - cmake -G"Visual Studio 15 2017 Win64" ./CMakeLists.txt -H. -Bbuild -DCMAKE_BUILD_TYPE=Release 
+    - cmake -G"Visual Studio 15 2017 Win64" ./CMakeLists.txt -H. -Bbuild -DCMAKE_BUILD_TYPE=Release -DZSTD_USE_STATIC_RUNTIME=ON
     - cmake --build build --config Release
 
 after_build:
     # remove unnecessary files
-    - rm -f ./build/lib/Release/*.exp
-    - rm -f ./build/lib/Release/*.pdb
-    - rm -f ./build/lib/Release/zstd_static.lib
+    #- rm -f ./build/lib/Release/*.exp
+    #- rm -f ./build/lib/Release/*.pdb
+    #- rm -f ./build/lib/Release/zstd_static.lib
     
     # copy include and source code files
     - mkdir -p "./build/lib/Release/include/"
